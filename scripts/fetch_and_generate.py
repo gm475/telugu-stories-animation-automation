@@ -25,7 +25,7 @@ def generate_trending_topic():
         )
 
         # Extract and print the generated topic
-        topic = completion.choices[0].message.strip()
+        topic = completion.choices[0].message()
         return topic
 
     except Exception as e:
