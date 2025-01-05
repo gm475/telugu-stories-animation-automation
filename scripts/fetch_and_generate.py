@@ -1,55 +1,36 @@
+import openai
 import os
-from pytrends.request import TrendReq
-from openai import OpenAI
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Retrieve OpenAI API key from the environment variable set in GitHub Actions
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Fetch trending topics using Google Trends (India)
-def fetch_trending_topics():
+# Define a function to generate a trending topic for kids' animation
+def generate_trending_topic():
+    prompt = (
+        "Generate a trending topic for a kids' animation video that is fun, creative, and engaging. "
+        "The topic should involve an exciting adventure or a new creative idea that kids will find interesting and relevant. "
+        "Please make it something that will attract attention and spark curiosity."
+    )
+
     try:
-        pytrends = TrendReq(hl='en-IN', tz=360)  # Set to India
-        trending_searches = pytrends.trending_searches(pn='india')
-        return trending_searches
-    except Exception as e:
-        print(f"Error fetching trending topics: {e}")
-        return []
-
-# Generate script based on the trending topic
-def generate_script(trending_topic):
-    try:
-        # The prompt for generating the script
-        prompt = f"Create a short, fun Telugu story for kids about the trending topic: {trending_topic}."
-
-        # Make the API call using chat.completions.create
-        chat_response = client.chat.completions.create(
-            model="gpt-4o",  # Specify the correct model here
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7
+        # Send the request to OpenAI's GPT-4 model to generate the topic
+        response = openai.Completion.create(
+            engine="gpt-4",  # Use GPT-4 engine
+            prompt=prompt,
+            max_tokens=100,  # Limit the response to a maximum of 100 tokens
+            temperature=0.7,  # Creativity level, adjust between 0 and 1
+            n=1,  # Generate one result
+            stop=None  # No specific stopping sequence
         )
 
-        # Extract the message from the response
-        return chat_response['choices'][0]['message']['content'].strip()
+        # Extract and print the generated topic
+        topic = response.choices[0].text.strip()
+        return topic
 
     except Exception as e:
-        print(f"Error generating script: {e}")
-        return "Sorry, I couldn't generate a script at the moment."
+        return f"Error generating topic: {str(e)}"
 
-def main():
-    topics = fetch_trending_topics()
-    
-    if topics.empty:  # Explicit check if DataFrame is empty
-        print("No trending topics found, exiting.")
-        return
-    
-    trending_topic = topics.iloc[0]  # Use the top trending topic
-    print(f"Using trending topic: {trending_topic}")
-    
-    script = generate_script(trending_topic)
-    print(f"Final generated script: {script}")
-
+# Call the function and print the trending topic
 if __name__ == "__main__":
-    main()
+    trending_topic = generate_trending_topic()
+    print("Trending Topic for Kids' Animation:", trending_topic)

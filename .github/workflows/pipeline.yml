@@ -28,15 +28,15 @@ jobs:
       - name: Fetch Trending Topics and Generate Script
         run: python scripts/fetch_and_generate.py  # This will generate the script file
 
-      - name: Convert Script to Voice
-        run: python scripts/generate_voice.py  # This will convert the generated script to voice (audio)
-
-      - name: Install Blender
-        run: sudo apt-get install -y blender  # Install Blender for animation rendering
-
-      - name: Render Animation
-        run: |
-          blender -b assets/animation_template.blend -P scripts/render_animation.py  # Run Blender animation
-
-      - name: Merge Animation and Voiceover
-        run: python merge_audio_video.py  # Merge the animation and audio into a final video
+      #- name: Convert Script to Voice
+      #  run: python scripts/generate_voice.py  # This will convert the generated script to voice (audio)
+#
+      #- name: Install Blender
+      #  run: sudo apt-get install -y blender  # Install Blender for animation rendering
+#
+      #- name: Render Animation
+      #  run: |
+      #    blender -b assets/animation_template.blend -P scripts/render_animation.py  # Run Blender animation
+#
+      #- name: Merge Animation and Voiceover
+      #  run: python merge_audio_video.py  # Merge the animation and audio into a final video
