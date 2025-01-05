@@ -13,8 +13,8 @@ def generate_trending_topic():
     )
 
     try:
-        # Use the new chat-based API method for GPT-4 (the new API interface)
-        response = openai.chat_completions.create(
+        # Use the correct method with the new chat-based API (OpenAI v1.0.0+)
+        response = openai.chat.Completion.create(
             model="gpt-4",  # Use GPT-4 model
             messages=[{"role": "system", "content": "You are a helpful assistant."},
                       {"role": "user", "content": prompt}],
