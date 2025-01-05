@@ -32,13 +32,15 @@ def fetch_youtube_trends_from_channel(channel_url):
 def generate_story(topic):
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     prompt = (
-        f"Write a short, fun kids' story in pure Telugu about '{topic}'. "
-        "Ensure the language is grammatically correct, engaging for children, and avoids using English words unless absolutely necessary. "
-        "Use simple Telugu vocabulary suitable for kids."
+        f"Write a short Telugu kids' story about '{topic}'. "
+        "Use very simple Telugu language, suitable for young children. "
+        "Avoid difficult words and keep the sentences short and easy to understand. "
+        "Make sure the story is engaging, fun, and grammatically correct."
     )
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
+            temperature=0.5,
             messages=[
                 {"role": "developer", "content": "You are a helpful assistant that generates engaging stories."},
                 {"role": "user", "content": prompt}
@@ -47,6 +49,23 @@ def generate_story(topic):
         return response.choices[0].message.content
     except Exception as e:
         return f"Error generating story: {str(e)}"
+
+def refine_story_with_feedback(initial_story):
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    feedback_prompt = (
+        "Refine the following Telugu story to make it simpler and ensure there are no grammar mistakes. "
+        "Avoid using difficult Telugu words and make the language suitable for children. "
+        "Here is the story:\n\n" + initial_story
+    )
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a Telugu language expert."},
+            {"role": "user", "content": feedback_prompt}
+        ]
+    )
+    return response.choices[0].message.content
+
 
 # Function to save the story to a file
 def save_story_to_file(story, file_path):
@@ -68,14 +87,15 @@ if __name__ == "__main__":
         topic = topics[0]
         print(f"\nGenerating story for topic: {topic}")
         kids_story = generate_story(topic)
+        refined_story = refine_story_with_feedback(kids_story)
 
-        if kids_story.startswith("Error"):
-            print(kids_story)
+        if refined_story.startswith("Error"):
+            print(refined_story)
         else:
-            print("\nGenerated Story:\n", kids_story)
+            print("\nGenerated Story:\n", refined_story)
             # Save the story to the output folder
             output_file_path = "output/script.txt"
-            save_story_to_file(kids_story, output_file_path)
+            save_story_to_file(refined_story, output_file_path)
             print(f"\nStory saved to {output_file_path}")
     else:
         print("No relevant topics found.")
