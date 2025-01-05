@@ -1,12 +1,10 @@
+import openai
 import os
-from openai import OpenAI
 
-# Initialize the OpenAI client
-client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY")  # Retrieve the API key from environment variables
-)
+# Retrieve OpenAI API key from the environment variable set in GitHub Actions
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Define the function to generate a trending topic for kids' animation
+# Define a function to generate a trending topic for kids' animation
 def generate_trending_topic():
     prompt = (
         "Generate a trending topic for a kids' animation video that is fun, creative, and engaging. "
@@ -15,17 +13,16 @@ def generate_trending_topic():
     )
 
     try:
-        # Use the correct method with the client and model (gpt-4o-mini)
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",  # Specify the gpt-4o-mini model
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that generates trending topics."},
-                {"role": "user", "content": prompt}
-            ]
+        # Use the correct API method for chat-based completions (OpenAI v1.0.0+)
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",  # Use GPT-4 model
+            prompt=prompt,
+            temperature=0.7,  # Creativity level, adjust between 0 and 1
+            n=1,  # Generate one result
         )
 
-        # Extract the topic from the response
-        topic = completion['choices'][0]['message']['content']
+        # Extract and print the generated topic
+        topic = response['choices'][0]['text'].strip()
         return topic
 
     except Exception as e:
