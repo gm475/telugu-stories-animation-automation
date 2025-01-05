@@ -1,34 +1,37 @@
 import requests
 from bs4 import BeautifulSoup
 
-def fetch_youtube_trends():
-    # URL for the YouTube trending page for India (can adjust region if needed)
-    url = "https://www.youtube.com/feed/trending?gl=IN&hl=en"
-
-    # Make the request to the YouTube trending page
-    response = requests.get(url)
+def fetch_youtube_trends_from_channel(channel_url):
+    # Request the YouTube channel's video page
+    response = requests.get(channel_url)
     
-    # Parse the page content with BeautifulSoup
+    # Parse the HTML content of the channel page
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Find all the video titles in the page
+    # Extract video titles from the page
     video_titles = []
 
-    # YouTube video titles are typically inside <a> tags with the 'yt-simple-endpoint' class
-    for video in soup.find_all('a', class_='yt-simple-endpoint style-scope ytd-video-renderer'):
+    # Find all <a> tags containing video titles or links
+    for video in soup.find_all('a', {'id': 'video-title'}):
         title = video.get('title')
         if title and ('animation' in title.lower() or 'kids' in title.lower() or 'cartoon' in title.lower()):
             video_titles.append(title)
 
     return video_titles
 
-# Fetch the trending kids' animation topics
-topics = fetch_youtube_trends()
+# Example YouTube Channel URLs for kids' animation (can use popular channels like Chhota Bheem, etc.)
+channel_urls = [
+    "https://www.youtube.com/c/ChhotaBheemOfficial",
+    "https://www.youtube.com/c/MotuPatluCartoon",
+    "https://www.youtube.com/c/BalGanesh",
+]
 
-# Print out the top trending topics related to animation for kids
-if topics:
-    print("Top trending kids' animation topics:")
-    for idx, topic in enumerate(topics, 1):
-        print(f"{idx}. {topic}")
-else:
-    print("No relevant trending topics found.")
+# Fetch trending kids' animation topics from selected channels
+for url in channel_urls:
+    print(f"Trending topics from {url}:")
+    topics = fetch_youtube_trends_from_channel(url)
+    if topics:
+        for idx, topic in enumerate(topics, 1):
+            print(f"{idx}. {topic}")
+    else:
+        print("No relevant topics found.\n")
