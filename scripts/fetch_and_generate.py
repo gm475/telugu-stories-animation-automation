@@ -7,7 +7,7 @@ def fetch_youtube_trends():
 
     # Make the request to the YouTube trending page
     response = requests.get(url)
-    
+    print(f"Response Content (first 500 characters): {response.text[:500]}")
     # Parse the page content with BeautifulSoup
     soup = BeautifulSoup(response.text, 'html.parser')
 
