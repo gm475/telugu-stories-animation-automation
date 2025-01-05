@@ -1,22 +1,34 @@
-from pytrends.request import TrendReq
+import requests
+from bs4 import BeautifulSoup
 
-def fetch_indian_kids_animation_topic():
-    pytrends = TrendReq(hl="en-US", tz=360)
-    trending_searches = pytrends.trending_searches(pn="india")
+def fetch_youtube_trends():
+    # URL for the YouTube trending page for India (can adjust region if needed)
+    url = "https://www.youtube.com/feed/trending?gl=IN&hl=en"
+
+    # Make the request to the YouTube trending page
+    response = requests.get(url)
     
-    # Focus on kids' content, animation, Telugu/Hindi
-    animation_keywords = [
-        "kids animation", "2D animation", "3D animation", "cartoon", "children story", 
-        "Chhota Bheem", "Bal Ganesh", "Doraemon", "Krishna", "Motu Patlu", "animated series",
-        "telugu animation", "hindi animation", "kids cartoon"
-    ]
-    
-    for topic in trending_searches[0]:
-        if any(keyword.lower() in topic.lower() for keyword in animation_keywords):
-            return topic  # Return the first matching topic
+    # Parse the page content with BeautifulSoup
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-    return "No relevant Indian kids' animation topic found"
+    # Find all the video titles in the page
+    video_titles = []
 
-topic = fetch_indian_kids_animation_topic()
+    # YouTube video titles are typically inside <a> tags with the 'yt-simple-endpoint' class
+    for video in soup.find_all('a', class_='yt-simple-endpoint style-scope ytd-video-renderer'):
+        title = video.get('title')
+        if title and ('animation' in title.lower() or 'kids' in title.lower() or 'cartoon' in title.lower()):
+            video_titles.append(title)
 
-print(f"Top trending Indian kids' animation topic: {topic}")
+    return video_titles
+
+# Fetch the trending kids' animation topics
+topics = fetch_youtube_trends()
+
+# Print out the top trending topics related to animation for kids
+if topics:
+    print("Top trending kids' animation topics:")
+    for idx, topic in enumerate(topics, 1):
+        print(f"{idx}. {topic}")
+else:
+    print("No relevant trending topics found.")
