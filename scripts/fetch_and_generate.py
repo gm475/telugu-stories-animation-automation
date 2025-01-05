@@ -1,11 +1,18 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 def fetch_youtube_trends_from_channel(channel_url):
-    # Setup ChromeDriver (make sure you have Chrome installed)
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+    # Set Chrome options for headless operation (no GUI)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Bypass sandboxing issues
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Disable /dev/shm usage
+
+    # Setup ChromeDriver with the specified options
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     
     # Open the YouTube channel URL
     driver.get(channel_url)
@@ -31,7 +38,7 @@ def fetch_youtube_trends_from_channel(channel_url):
 
 # Example YouTube Channel URLs for kids' animation (e.g., Chhota Bheem)
 channel_urls = [
-    "https://www.youtube.com/channel/UCiBigY9XM-HaOxUc269ympg",
+    "https://www.youtube.com/channel/UCiBigY9XM-HaOxUc269ympg",  # Example channel
 ]
 
 # Fetch trending kids' animation topics from selected channels
