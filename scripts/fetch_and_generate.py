@@ -33,11 +33,11 @@ def generate_script(trending_topic):
 def main():
     topics = fetch_trending_topics()
     
-    if not topics:
+    if topics.empty:  # Explicit check if DataFrame is empty
         print("No trending topics found, exiting.")
         return
     
-    trending_topic = topics[0]  # Use the top trending topic
+    trending_topic = topics.iloc[0]  # Use the top trending topic
     print(f"Using trending topic: {trending_topic}")
     
     script = generate_script(trending_topic)
