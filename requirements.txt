@@ -1,4 +1,4 @@
-openai==1.0.0
+openai
 httpx==0.23.0
 pytrends
 gtts

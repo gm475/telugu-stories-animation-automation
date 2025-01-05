@@ -19,13 +19,17 @@ def fetch_trending_topics():
 def generate_script(trending_topic):
     try:
         prompt = f"Create a short, fun Telugu story for kids about the trending topic: {trending_topic}."
-        response = openai.Completion.create(  # Corrected API call
-            model="gpt-3.5-turbo",  # Updated to a supported model
-            prompt=prompt,
+        # Use ChatCompletion API with correct method
+        response = openai.ChatCompletion.create(  
+            model="gpt-4",  # Correct model identifier for GPT-4
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt},
+            ],
             max_tokens=1000,
             temperature=0.7
         )
-        return response.choices[0].text.strip()
+        return response['choices'][0]['message']['content'].strip()
     except Exception as e:
         print(f"Error generating script: {e}")
         return "Sorry, I couldn't generate a script at the moment."
