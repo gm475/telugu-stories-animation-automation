@@ -1,6 +1,7 @@
 name: Telugu Animation Pipeline
 
 on:
+  push:
   #schedule:
   #  - cron: '0 0 * * *'  # Run daily at midnight
   workflow_dispatch:  # Allows manual triggering
