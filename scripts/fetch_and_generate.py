@@ -7,10 +7,11 @@ client = OpenAI(
 )
 
 # Define the function to generate a trending topic for kids' animation
-def generate_trending_topic(topic):
+def generate_trending_topic():
     prompt = (
-        f"Write a short, fun Telugu kids' story about '{topic}'. Make it adventurous, creative, and engaging "
-        "for children, with a fun and exciting narrative that will captivate their attention."
+        "Generate a trending topic for a kids' animation video that is fun, creative, and engaging. "
+        "The topic should involve an exciting adventure or a new creative idea that kids will find interesting and relevant. "
+        "Please make it something that will attract attention and spark curiosity."
     )
 
     try:
@@ -18,22 +19,19 @@ def generate_trending_topic(topic):
         completion = client.chat.completions.create(
             model="gpt-4o-mini",  # Specify the gpt-4o-mini model
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that generates engaging stories."},
+                {"role": "system", "content": "You are a helpful assistant that generates trending topics."},
                 {"role": "user", "content": prompt}
             ]
         )
 
-        # Extract and return the generated story
-        story = completion.choices[0]['message']['content']
-        return story
+        # Extract the topic from the response
+        topic = completion['choices'][0]['message']['content']
+        return topic
 
     except Exception as e:
-        return f"Error generating story: {str(e)}"
+        return f"Error generating topic: {str(e)}"
 
-# Example trending topic from Chhota Bheem
-topic = "Chhota Bheem - New Year Party with Bheem & Friends | Cartoons for Kids"
-
-# Call the function and print the generated story
+# Call the function and print the trending topic
 if __name__ == "__main__":
-    kids_story = generate_trending_topic(topic)
-    print("Generated Kids' Story:\n", kids_story)
+    trending_topic = generate_trending_topic()
+    print("Trending Topic for Kids' Animation:", trending_topic)
