@@ -9,8 +9,8 @@ env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
-  # Job 1: Fetch and Generate Script
-  fetch_and_generate_script:
+  # Complete Animation Pipeline in One Job
+  animation_pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -26,68 +26,17 @@ jobs:
           pip install -r requirements.txt
 
       - name: Fetch Trending Topics and Generate Script
-        run: python scripts/fetch_and_generate.py
-
-  # Job 2: Generate Speech from text
-  text_to_speech:
-    runs-on: ubuntu-latest
-    needs: fetch_and_generate_script
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
+        run: python scripts/fetch_and_generate.py  # This will generate the script file
 
       - name: Convert Script to Voice
-        run: python scripts/generate_voice.py
-
-  # Job 3: Animate Video using Blender
-  animate_video:
-    runs-on: ubuntu-latest
-    needs: text_to_speech
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+        run: python scripts/generate_voice.py  # This will convert the generated script to voice (audio)
 
       - name: Install Blender
-        run: sudo apt-get install -y blender
+        run: sudo apt-get install -y blender  # Install Blender for animation rendering
 
       - name: Render Animation
-        run: blender -b assets/animation_template.blend -P scripts/render_animation.py
-
-  # Job 4: Merge Animation and Voiceover
-  merge_audio_video:
-    runs-on: ubuntu-latest
-    needs: animate_video
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-  
-      - name: Set Up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-  
-      - name: Install FFmpeg
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-  
-      - name: Merge Animation and Voiceover
-        run: python merge_audio_video.py
+          blender -b assets/animation_template.blend -P scripts/render_animation.py  # Run Blender animation
 
-  #upload_to_youtube:
-  #  runs-on: ubuntu-latest
-  #  needs: merge_audio_video
-  #  steps:
-  #    - name: Checkout Repository
-  #      uses: actions/checkout@v2
-  #
-  #    - name: Install YouTube API Dependencies
-  #      run: pip install -r requirements.txt
-  #
-  #    - name: Upload to YouTube
-  #      run: python scripts/upload_video.py
+      - name: Merge Animation and Voiceover
+        run: python merge_audio_video.py  # Merge the animation and audio into a final video
