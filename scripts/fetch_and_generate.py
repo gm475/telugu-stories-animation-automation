@@ -15,7 +15,7 @@ def generate_trending_topic():
     try:
         # Use the correct method with the new chat-based API (OpenAI v1.0.0+)
         response = openai.chat.completions.create(
-            model="gpt-4o",  # Use GPT-4 model
+            model="GPT-4o mini",  # Use GPT-4 model
             messages=[{"role": "system", "content": "You are a helpful assistant."},
                       {"role": "user", "content": prompt}],
             max_tokens=100,  # Limit the response to a maximum of 100 tokens
