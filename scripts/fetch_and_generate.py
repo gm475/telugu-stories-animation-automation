@@ -32,8 +32,9 @@ def fetch_youtube_trends_from_channel(channel_url):
 def generate_story(topic):
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     prompt = (
-        f"Write a short, fun Telugu kids' story about '{topic}'. Make it adventurous, creative, and engaging "
-        "for children, with a fun and exciting narrative that will captivate their attention."
+        f"Write a short, fun kids' story in pure Telugu about '{topic}'. "
+        "Ensure the language is grammatically correct, engaging for children, and avoids using English words unless absolutely necessary. "
+        "Use simple Telugu vocabulary suitable for kids."
     )
     try:
         response = client.chat.completions.create(
