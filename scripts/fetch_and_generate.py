@@ -1,34 +1,36 @@
-import openai
 import os
+from openai import OpenAI
 
-# Retrieve OpenAI API key from the environment variable set in GitHub Actions
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Initialize the OpenAI client
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY")  # Retrieve the API key from environment variables
+)
 
-# Define a function to generate a trending topic for kids' animation
-def generate_trending_topic():
+# Define the function to generate a trending topic for kids' animation
+def generate_story():
     prompt = (
-        "Generate a trending topic for a kids' animation video that is fun, creative, and engaging. "
-        "The topic should involve an exciting adventure or a new creative idea that kids will find interesting and relevant. "
-        "Please make it something that will attract attention and spark curiosity."
+        f"Write a short, fun Telugu kids' story about '{topic}'. Make it adventurous, creative, and engaging "
+        "for children, with a fun and exciting narrative that will captivate their attention."
     )
 
     try:
-        # Use the correct API method for chat-based completions (OpenAI v1.0.0+)
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",  # Use GPT-4 model
-            prompt=prompt,
-            temperature=0.7,  # Creativity level, adjust between 0 and 1
-            n=1,  # Generate one result
+        # Use the correct method with the client and model (gpt-4o-mini)
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",  # Specify the gpt-4o-mini model
+            messages=[
+                {"role": "developer", "content": "You are a helpful assistant that generates engaging stories."},
+                {"role": "user", "content": prompt}
+            ]
         )
 
-        # Extract and print the generated topic
-        topic = response['choices'][0]['text'].strip()
-        return topic
+        # Extract and print the generated story
+        story = completion.choices[0].message
+        return story
 
     except Exception as e:
         return f"Error generating topic: {str(e)}"
 
 # Call the function and print the trending topic
 if __name__ == "__main__":
-    trending_topic = generate_trending_topic()
-    print("Trending Topic for Kids' Animation:", trending_topic)
+    generate_kids_story = generate_story()
+    print("Story for Kids' Animation:", generate_kids_story)
