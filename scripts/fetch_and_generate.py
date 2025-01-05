@@ -15,7 +15,7 @@ def fetch_trending_topics():
 def generate_script(trending_topic):
     prompt = f"Create a short, fun Telugu story for kids about the trending topic: {trending_topic}."
     response = openai.Completion.create(
-        engine="text-davinci-003",
+        model="gpt-3.5-turbo",  # Updated to a supported model
         prompt=prompt,
         max_tokens=1000,
         temperature=0.7
