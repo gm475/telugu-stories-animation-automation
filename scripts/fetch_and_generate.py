@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
@@ -11,8 +12,11 @@ def fetch_youtube_trends_from_channel(channel_url):
     chrome_options.add_argument("--no-sandbox")  # Bypass sandboxing issues
     chrome_options.add_argument("--disable-dev-shm-usage")  # Disable /dev/shm usage
 
-    # Setup ChromeDriver with the specified options
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    # Setup ChromeDriver service
+    service = Service(ChromeDriverManager().install())
+
+    # Initialize the WebDriver with the service and options
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     
     # Open the YouTube channel URL
     driver.get(channel_url)
