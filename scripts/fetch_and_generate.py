@@ -1,11 +1,11 @@
 import os
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver # type: ignore
+from selenium.webdriver.common.by import By # type: ignore
+from selenium.webdriver.chrome.options import Options # type: ignore
+from selenium.webdriver.chrome.service import Service # type: ignore
+from webdriver_manager.chrome import ChromeDriverManager # type: ignore
 import time
-from openai import OpenAI
+from openai import OpenAI # type: ignore
 
 # Function to fetch YouTube trends
 def fetch_youtube_trends_from_channel(channel_url):
@@ -66,3 +66,6 @@ if __name__ == "__main__":
         print("\nGenerated Story:\n", kids_story)
     else:
         print("No relevant topics found.")
+
+with open("output/script.txt", "w", encoding="utf-8") as f:
+    f.write(kids_story)

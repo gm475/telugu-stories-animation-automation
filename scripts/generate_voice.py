@@ -1,4 +1,4 @@
-from gtts import gTTS
+from gtts import gTTS # type: ignore
 
 with open("output/script.txt", "r", encoding="utf-8") as f:
     script = f.read()
