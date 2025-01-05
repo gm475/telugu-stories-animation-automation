@@ -1,9 +1,9 @@
 import os
 from pytrends.request import TrendReq
-import openai
+from openai import OpenAI
 
-# Fetch OpenAI API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Fetch trending topics using Google Trends (India)
 def fetch_trending_topics():
@@ -18,18 +18,22 @@ def fetch_trending_topics():
 # Generate script based on the trending topic
 def generate_script(trending_topic):
     try:
+        # The prompt for generating the script
         prompt = f"Create a short, fun Telugu story for kids about the trending topic: {trending_topic}."
-        # Use ChatCompletion API with correct method
-        response = openai.ChatCompletion.create(  
-            model="gpt-4",  # Correct model identifier for GPT-4
+
+        # Make the API call using chat.completions.create
+        chat_response = client.chat.completions.create(
+            model="gpt-4o",  # Specify the correct model here
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": prompt}
             ],
-            max_tokens=1000,
             temperature=0.7
         )
-        return response['choices'][0]['message']['content'].strip()
+
+        # Extract the message from the response
+        return chat_response['choices'][0]['message']['content'].strip()
+
     except Exception as e:
         print(f"Error generating script: {e}")
         return "Sorry, I couldn't generate a script at the moment."
