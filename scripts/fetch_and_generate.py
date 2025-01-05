@@ -13,18 +13,18 @@ def generate_trending_topic():
     )
 
     try:
-        # Send the request to OpenAI's GPT-4 model to generate the topic
-        response = openai.Completion.create(
-            engine="gpt-4",  # Use GPT-4 engine
-            prompt=prompt,
+        # Use the new chat-based API method for GPT-4 (the new API interface)
+        response = openai.chat_completions.create(
+            model="gpt-4",  # Use GPT-4 model
+            messages=[{"role": "system", "content": "You are a helpful assistant."},
+                      {"role": "user", "content": prompt}],
             max_tokens=100,  # Limit the response to a maximum of 100 tokens
             temperature=0.7,  # Creativity level, adjust between 0 and 1
             n=1,  # Generate one result
-            stop=None  # No specific stopping sequence
         )
 
         # Extract and print the generated topic
-        topic = response.choices[0].text.strip()
+        topic = response['choices'][0]['message']['content'].strip()
         return topic
 
     except Exception as e:
