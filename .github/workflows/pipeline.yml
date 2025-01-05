@@ -5,6 +5,9 @@ on:
   #  - cron: '0 0 * * *'  # Run daily at midnight
   workflow_dispatch:  # Allows manual triggering
 
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
 jobs:
   # Job 1: Fetch and Generate Script
   fetch_and_generate_script:
