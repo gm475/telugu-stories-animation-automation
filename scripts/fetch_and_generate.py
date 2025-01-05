@@ -1,56 +1,39 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-import time
+import os
+from openai import OpenAI
 
-def fetch_youtube_trends_from_channel(channel_url):
-    # Set Chrome options for headless operation (no GUI)
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
-    chrome_options.add_argument("--no-sandbox")  # Bypass sandboxing issues
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Disable /dev/shm usage
+# Initialize the OpenAI client
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY")  # Retrieve the API key from environment variables
+)
 
-    # Setup ChromeDriver service
-    service = Service(ChromeDriverManager().install())
+# Define the function to generate a trending topic for kids' animation
+def generate_trending_topic(topic):
+    prompt = (
+        f"Write a short, fun Telugu kids' story about '{topic}'. Make it adventurous, creative, and engaging "
+        "for children, with a fun and exciting narrative that will captivate their attention."
+    )
 
-    # Initialize the WebDriver with the service and options
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    
-    # Open the YouTube channel URL
-    driver.get(channel_url)
+    try:
+        # Use the correct method with the client and model (gpt-4o-mini)
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",  # Specify the gpt-4o-mini model
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that generates engaging stories."},
+                {"role": "user", "content": prompt}
+            ]
+        )
 
-    # Wait for the page to load (adjust time if necessary)
-    time.sleep(5)
+        # Extract and return the generated story
+        story = completion.choices[0]['message']['content']
+        return story
 
-    # Get all video titles (they may appear after JavaScript renders them)
-    video_titles = []
+    except Exception as e:
+        return f"Error generating story: {str(e)}"
 
-    # Find all video elements on the page (based on video title 'id')
-    video_elements = driver.find_elements(By.XPATH, '//a[@id="video-title"]')
+# Example trending topic from Chhota Bheem
+topic = "Chhota Bheem - New Year Party with Bheem & Friends | Cartoons for Kids"
 
-    for video in video_elements:
-        title = video.get_attribute('title')
-        if title and ('animation' in title.lower() or 'kids' in title.lower() or 'cartoon' in title.lower()):
-            video_titles.append(title)
-    
-    # Close the driver
-    driver.quit()
-
-    return video_titles
-
-# Example YouTube Channel URLs for kids' animation (e.g., Chhota Bheem)
-channel_urls = [
-    "https://www.youtube.com/channel/UCiBigY9XM-HaOxUc269ympg",  # Example channel
-]
-
-# Fetch trending kids' animation topics from selected channels
-for url in channel_urls:
-    print(f"Trending topics from {url}:")
-    topics = fetch_youtube_trends_from_channel(url)
-    if topics:
-        for idx, topic in enumerate(topics, 1):
-            print(f"{idx}. {topic}")
-    else:
-        print("No relevant topics found.\n")
+# Call the function and print the generated story
+if __name__ == "__main__":
+    kids_story = generate_trending_topic(topic)
+    print("Generated Kids' Story:\n", kids_story)
