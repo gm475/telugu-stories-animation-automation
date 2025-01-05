@@ -1,11 +1,11 @@
 import os
-from selenium import webdriver # type: ignore
-from selenium.webdriver.common.by import By # type: ignore
-from selenium.webdriver.chrome.options import Options # type: ignore
-from selenium.webdriver.chrome.service import Service # type: ignore
-from webdriver_manager.chrome import ChromeDriverManager # type: ignore
+from selenium import webdriver  # type: ignore
+from selenium.webdriver.common.by import By  # type: ignore
+from selenium.webdriver.chrome.options import Options  # type: ignore
+from selenium.webdriver.chrome.service import Service  # type: ignore
+from webdriver_manager.chrome import ChromeDriverManager  # type: ignore
 import time
-from openai import OpenAI # type: ignore
+from openai import OpenAI  # type: ignore
 
 # Function to fetch YouTube trends
 def fetch_youtube_trends_from_channel(channel_url):
@@ -44,16 +44,20 @@ def generate_story(topic):
             ]
         )
         return response.choices[0].message.content
-    
-    
     except Exception as e:
-        return f"Error generating topic: {str(e)}"
+        return f"Error generating story: {str(e)}"
+
+# Function to save the story to a file
+def save_story_to_file(story, file_path):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(story)
 
 # Main Workflow
 if __name__ == "__main__":
     channel_url = "https://www.youtube.com/channel/UCiBigY9XM-HaOxUc269ympg"
     topics = fetch_youtube_trends_from_channel(channel_url)
-    
+
     if topics:
         print("Trending Topics:")
         for idx, topic in enumerate(topics, 1):
@@ -63,9 +67,14 @@ if __name__ == "__main__":
         topic = topics[0]
         print(f"\nGenerating story for topic: {topic}")
         kids_story = generate_story(topic)
-        print("\nGenerated Story:\n", kids_story)
+
+        if kids_story.startswith("Error"):
+            print(kids_story)
+        else:
+            print("\nGenerated Story:\n", kids_story)
+            # Save the story to the output folder
+            output_file_path = "output/script.txt"
+            save_story_to_file(kids_story, output_file_path)
+            print(f"\nStory saved to {output_file_path}")
     else:
         print("No relevant topics found.")
-
-with open("output/script.txt", "w", encoding="utf-8") as f:
-    f.write(kids_story)
