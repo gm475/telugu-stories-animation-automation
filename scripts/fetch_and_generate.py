@@ -1,37 +1,22 @@
-import os
-from openai import OpenAI
+from pytrends.request import TrendReq
 
-# Initialize the OpenAI client
-client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY")  # Retrieve the API key from environment variables
-)
+# Initialize the pytrends request
+pytrends = TrendReq(hl='en-US', tz=360)
 
-# Define the function to generate a trending topic for kids' animation
-def generate_trending_topic():
-    prompt = (
-        "Generate a trending topic for a kids' animation video that is fun, creative, and engaging. "
-        "The topic should involve an exciting adventure or a new creative idea that kids will find interesting and relevant. "
-        "Please make it something that will attract attention and spark curiosity."
-    )
+# Define the keywords related to kids' animation
+keywords = ['kids animation', 'cartoon story', 'children animation', 'animation series for kids', 'animated adventure']
 
-    try:
-        # Use the correct method with the client and model (gpt-4o-mini)
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",  # Specify the gpt-4o-mini model
-            messages=[
-                {"role": "developer", "content": "You are a prompt generator."},
-                {"role": "user", "content": prompt}
-            ]
-        )
+# Get trending search topics for the defined keywords
+pytrends.build_payload(keywords, cat=0, timeframe='now 7-d', geo='US', gprop='')
 
-        # Extract and print the generated topic
-        topic = completion.choices[0].message
-        return topic
+# Get the interest over time data
+trending_data = pytrends.interest_over_time()
 
-    except Exception as e:
-        return f"Error generating topic: {str(e)}"
-
-# Call the function and print the trending topic
-if __name__ == "__main__":
-    trending_topic = generate_trending_topic()
-    print("Trending Topic for Kids' Animation:", trending_topic)
+# Print trending topics for kids' animation
+if not trending_data.empty:
+    print("Trending Kids Animation Topics Over the Past Week:")
+    for keyword in keywords:
+        print(f"Topic: {keyword}")
+        print(trending_data[keyword].tail(1))  # Display the most recent data for each keyword
+else:
+    print("No trending data available for the specified topics.")
