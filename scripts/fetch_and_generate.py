@@ -36,14 +36,16 @@ def generate_story(topic):
         "for children, with a fun and exciting narrative that will captivate their attention."
     )
     try:
-        completion = client.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "developer", "content": "You are a helpful assistant that generates engaging stories."},
                 {"role": "user", "content": prompt}
             ]
         )
-        return completion.choices[0].message["content"]
+        return response.choices[0].message.content
+    
+    
     except Exception as e:
         return f"Error generating topic: {str(e)}"
 
@@ -58,9 +60,9 @@ if __name__ == "__main__":
             print(f"{idx}. {topic}")
         
         # Pick the first topic for story generation
-        selected_topic = topics[0]
-        print(f"\nGenerating story for topic: {selected_topic}")
-        kids_story = generate_story(selected_topic)
+        topic = topics[0]
+        print(f"\nGenerating story for topic: {topic}")
+        kids_story = generate_story(topic)
         print("\nGenerated Story:\n", kids_story)
     else:
         print("No relevant topics found.")
