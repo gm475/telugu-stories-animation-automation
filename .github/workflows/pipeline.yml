@@ -32,16 +32,22 @@ jobs:
       - name: Convert Script to Voice
         run: python scripts/generate_voice.py  # This will convert the generated script to voice (audio)
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: output/
-
       - name: Install Blender
         run: |
             sudo apt-get install -y blender  # Install Blender for animation rendering
             blender -version  # Check Blender version
+
+      - name: Run Blender Automation Script
+        run: |
+          blender --background --python scripts/animation_script.py
+        # --background: Runs Blender without a GUI
+        # --python: Path to your Python script that automates the animation
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: output/ # Specify the output path from your Blender script
 
       #- name: Render Animation
       #  run: |
