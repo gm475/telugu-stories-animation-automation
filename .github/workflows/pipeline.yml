@@ -38,9 +38,9 @@ jobs:
           name: build-artifacts
           path: output/
 
-      #- name: Install Blender
-      #  run: sudo apt-get install -y blender  # Install Blender for animation rendering
-#
+      - name: Install Blender
+        run: sudo apt-get install -y blender  # Install Blender for animation rendering
+
       #- name: Render Animation
       #  run: |
       #    blender -b assets/animation_template.blend -P scripts/render_animation.py  # Run Blender animation
