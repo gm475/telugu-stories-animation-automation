@@ -39,7 +39,9 @@ jobs:
           path: output/
 
       - name: Install Blender
-        run: sudo apt-get install -y blender  # Install Blender for animation rendering
+        run: |
+            sudo apt-get install -y blender  # Install Blender for animation rendering
+            blender -version  # Check Blender version
 
       #- name: Render Animation
       #  run: |
