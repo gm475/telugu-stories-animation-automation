@@ -31,16 +31,26 @@ jobs:
 
       - name: Convert Script to Voice
         run: python scripts/generate_voice.py  # This will convert the generated script to voice (audio)
-
+      
       - name: Install Blender
         run: |
             sudo apt-get install -y blender  # Install Blender for animation rendering
+      
+      - name: Install dependencies for Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxinerama1 libxcursor1 libxi6
+      
+      - name: Set environment variables for headless Blender
+        run: |
+          export MESA_GL_VERSION_OVERRIDE=3.3
+          export MESA_LOADER_DRIVER_OVERRIDE=softpipe
+        
 
       - name: Run Blender Automation Script
         run: |
           blender --background --python scripts/animation_script.py
-        # --background: Runs Blender without a GUI
-        # --python: Path to your Python script that automates the animation
+        
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
